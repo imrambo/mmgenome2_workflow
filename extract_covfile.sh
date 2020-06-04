@@ -7,7 +7,7 @@ usage="$(basename "$0"): extract coverage profiles for a genome.
 
 If extracting for mmgenome2, make sure --out ends with _cov
 
-extract_depthfile.sh -f <FASTA> -d <DEPTHFILE> -v <1|0> > out_cov
+extract_depthfile.sh -f <FASTA> -d <DEPTHFILE> -v <1|0> -o <OUTPUT>
 
 where:
 
