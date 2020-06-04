@@ -1,0 +1,6 @@
+Maintainer: Ian Rambo :: ian.rambo@utexas.edu
+
+The helper script extract_covfile.sh can be used to extract coverage information from a single genome from a JGI-type depthfile. 
+
+The batch_generate_covfiles.sh script is used to extract coverage profiles from multiple genomes based on CheckM 
+completeness and contamination thresholds.

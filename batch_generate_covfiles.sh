@@ -21,13 +21,11 @@ where:
    -j --- number of parallel jobs to execute. Default=2
    -l --- directory to write GNU parallel joblog to
 
+Run this script in the same directory as extract_covfile.sh
     "
-# Batch script to generate coverage files for genomic bins 
-# meeting certain quality threshold criteria.
 
 has_command () {
-    command -v "$1" >/dev/null 2>&1 || \
-    { echo "Requires $1. Ensure that $1 is in your \$PATH."; exit 1; }
+    command -v "$1" >/dev/null 2>&1 || { echo "Requires $1. Ensure that $1 is in your \$PATH."; exit 1; }
 }
 
 has_command parallel
@@ -37,7 +35,7 @@ ext="fa"
 novar=1
 joblog_dir=$(pwd)
 
-while getopts ':hf:d:o:v:' option; do
+while getopts ':hc:b:d:e:v:o:j:l:m:n:y:z:' option; do
     case "${option}" in
     h) echo "$usage"
        exit ;;
@@ -52,7 +50,7 @@ while getopts ':hf:d:o:v:' option; do
     m) comp_min=${OPTARG};;
     n) comp_max=${OPTARG};;
     y) cont_min=${OPTARG};;
-    z) comp_max=${OPTARG};;
+    z) cont_max=${OPTARG};;
     :) printf "missing argument for -%s\n" "$OPTARG" >&2
        echo "$usage" >&2
        exit 1 ;;
@@ -68,11 +66,11 @@ test -f $checkm_file || echo "CheckM file $checkm_file not found"
 test -d $bindir || echo "Directory $bindir containing input genomic bins not found"
 test -f $depthfile || echo "Input depth file $depthfile not found"
 
+
 tstamp=$(date +'%Y-%m-%d_%H-%M-%S')
 
 joblog=${joblog_dir}/$(basename "$0")_${tstamp}.joblog
 
-
 tail -n +4 $checkm_file  | \
     awk -v comp_min="$comp_min" -v comp_max="$comp_max" -v cont_min="$cont_min" -v cont_max="$cont_max" -F '[[:space:]]+' '($14 >= comp_min) && ($14 <= comp_max) && ($15 >= cont_min) && ($15 <= cont_max) {print $2}' | \
-    parallel --joblog $joblog --jobs $pjobs test -d ${outdir}/{} '||' mkdir -p ${outdir}/{}';' bash $PWD/extract_covfile.sh -f ${bindir}/{}.${ext} -d $depthfile -o ${outdir}/{}/{}_cov -v 1 
+    parallel --dryrun --joblog $joblog --jobs $pjobs test -d ${outdir}/{} '||' mkdir -p ${outdir}/{}';' bash $(pwd)/extract_covfile.sh -f ${bindir}/{}.${ext} -d $depthfile -o ${outdir}/{}/{}_cov -v $novar 
