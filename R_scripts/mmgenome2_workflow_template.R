@@ -1,8 +1,7 @@
 #!/usr/bin/env Rscript
 
-require(mmgenome2)
-require(dplyr)
-require(tidyr)
+library(mmgenome2)
+library(tidyverse)
 
 #rm(list=ls())
 
@@ -13,26 +12,48 @@ cols_by_sample <- function(sample, df) {
   return(sample_vars)
 }
 
+gg_boxplot <- function(df, x_vec, y_vec) {
+  #Create a box and whisker plot from long-format data
+  df %>% ggplot(aes(x = x_vec, y = y_vec)) + geom_boxplot() +
+    theme(axis.line = element_line(color="black"),
+          axis.title=element_text(size=12),
+          axis.text.x=element_text(color = "black", angle=65, hjust = 1, size = 7.5),
+          axis.text.y=element_text(color="black", size = 10),
+          strip.text.x = element_text(size = 11, colour = "black"),
+          strip.text.y = element_text(size = 11, colour = "black"))
+}
 
-setwd("/Users/ian/Documents/phd_research/MANERR_JGI/analysis/metaG/mmgenome2/47.concoct.D1105S12metaG")
+cov_dir <- "/Users/ian/Documents/phd_research/MANERR_JGI/analysis/metaG/mmgenome2/mmgenome2/cov_files"
+genome_dir <- "/Users/ian/Documents/phd_research/MANERR_JGI/analysis/metaG/das_tool/DASTool_Run2_concoct-maxbin2-metabat2-vamb_diamond_DASTool_bins"
 
-#Load coverage table
-cov_df <- read.table("47.concoct.D1105S12metaG_cov", header = TRUE, sep = "\t")
+#Path to genome coverage file
+cov_file <- paste(cov_dir,
+                  '1.concoct.D0819M02metaG/1.concoct.D0819M02metaG_cov',
+                  sep = "/")
 
-#Path to genome fasta
-genome <- "./47.concoct.D1105S12metaG.fa"
+cov_df <- read.table(cov_file, header = TRUE, sep = "\t")
 
-genome_basename <- gsub("\\.fa", "", basename(genome))
+cov_cols_renamed <- gsub("assembly_metaspades_cat_renamed_3kb_|\\.coordsort\\.bam",
+                         "", colnames(cov_df))
 
-#dplyr::arrange(cov_df_long, desc(coverage))
-
-renamed_cols <- gsub("assembly_metaspades_cat_renamed_3kb_|\\.coordsort\\.bam",
-                     "", colnames(cov_df))
-
-colnames(cov_df) <- renamed_cols
+colnames(cov_df) <- cov_cols_renamed
 
 #Coverage data in long format
-cov_df_long <- cov_df %>% tidyr::gather(colnames(cov_df)[2:length(colnames(cov_df))], key = "sample", value = "coverage")
+cov_df_long <- cov_df %>%
+  tidyr::gather(colnames(cov_df)[2:length(colnames(cov_df))],
+                key = "sample", value = "coverage")
+
+cov_quartiles <- cov_df_long %>% group_by(sample) %>%
+  summarise(tibble::enframe(quantile(coverage, c(0.25, 0.5, 0.75)),
+                            "quantile", "q_coverage"))
+
+cov_df_long %>% left_join(cov_quartiles) %>% head()
+
+upper_outlier <- upper_quartile + (IQR * 1.5)
+
+cov_lower_quartile <- cov_quartiles[[2]]
+cov_upper_quartile <- cov_quartiles[[5]]
+
 
 #Boxplot of sample coverage
 cov_boxplot <- cov_df_long %>% ggplot(aes(x = sample, y = coverage)) + geom_boxplot() +
@@ -43,6 +64,14 @@ cov_boxplot <- cov_df_long %>% ggplot(aes(x = sample, y = coverage)) + geom_boxp
         strip.text.x = element_text(size = 11, colour = "black"),
         strip.text.y = element_text(size = 11, colour = "black"))
 
+cov_boxplot
+#dplyr::arrange(cov_df_long, desc(coverage))
+#-----------------------------------------------------------------------------
+#Path to genome fasta
+genome <- paste(genome_dir, "1.concoct.D0819M02metaG.fa", sep = "/")
+
+genome_basename <- gsub("\\.fa", "", basename(genome))
+
 mm <- mmgenome2::mmload(assembly = genome,
                   coverage = cov_df,
                   verbose = TRUE,
@@ -50,9 +79,12 @@ mm <- mmgenome2::mmload(assembly = genome,
                   kmer_BH_tSNE = FALSE)
 
 #Samples to target
-s <- c("D0606U", "D0606S")
+s <- c("D0817M02", "D0817M12")
 
 svars <- cols_by_sample(sample = s, df = mm)
+
+
+mmgenome2::mmplot(mm, x = svars[1], y = svars[2])
 
 mmgenome2::mmplot_pairs(mm,
              variables = svars,
