@@ -3,7 +3,7 @@
 #Author: Ian Rambo
 #Thirteen... that's a mighty unlucky number... for somebody!
 
-#Script to clean 1.concoct.D0819M02metaG
+#Script to clean 121.concoct.D1103M02metaG_sub
 
 library(mmgenome2)
 library(tidyverse)
@@ -44,7 +44,7 @@ clean_dir <- "/Users/ian/Documents/phd_research/MANERR_JGI/analysis/metaG/mmgeno
 dir.create(clean_dir)
 
 #Pre-clean name of genome file
-genome_pre_name <- "1.concoct.D0819M02metaG.fa"
+genome_pre_name <- "121.concoct.D1103M02metaG_sub.fa"
 #-----------------------------------------------------------------------------
 #Path to genome
 genome_pre_path <- file.path(genome_dir, genome_pre_name)
@@ -150,23 +150,23 @@ mmpairs <- mmgenome2::mmplot_pairs(mm,
              textsize = 3)
 
 ### Create a scatter plot with 2d density overlay
-scatter_density2d_gg <- ggplot(mm, aes(x = log10(cov_D1103M12metaG_FD),
-               y = log10(cov_D0608M02metaG_FD))) +
+scatter_density2d_gg <- ggplot(mm, aes(x = log10(cov_D1103M02metaG_FD),
+               y = log10(cov_D0817M02metaG_FD))) +
   geom_point(aes(size = `length`), alpha = 0.6) +
   geom_density_2d()
 
 mmgenome2::mmplot(mm,
-                  x = "cov_D1103M12metaG_FD",
-                  y = "cov_D0608M02metaG_FD",
+                  x = "cov_D1103M02metaG_FD",
+                  y = "cov_D0817M02metaG_FD",
                   x_scale = "log10",
                   y_scale = "log10",
                   locator = TRUE)
 
 #List of shiny selection data frames
-mag_selections <- list(data.frame(cov_D1103M12metaG_FD = c(0.063, 0.063, 0.087, 0.318, 0.654, 1.094, 1.494, 1.249, 0.599),
-                              cov_D0608M02metaG_FD = c(1.359, 0.217, 0.112, 0.124, 0.331, 0.695, 1.558, 2.303, 2.803)),
-                   data.frame(cov_D1103M12metaG_FD = c(0.458, 0.458, 0.579, 0.876, 1.177, 1.845, 2.82, 3.584, 6.302, 5.977, 5.584, 3.226, 1.825, 1.033, 0.652, 0.414, 0.369),
-                              cov_D0608M02metaG_FD = c(0.204, 0.204, 0.27, 0.37, 0.499, 0.789, 1.044, 1.118, 0.482, 0.149, 0.045, 0.027, 0.021, 0.021, 0.018, 0.075, 0.155))
+mag_selections <- list(data.frame(cov_D1103M02metaG_FD = c(2.787, 2.779, 2.779, 2.869, 3.277, 3.733, 4.391, 5.15, 5.758, 6.387, 6.899, 7.257, 6.138, 3.763),
+                                  cov_D0817M02metaG_FD = c(3.982, 2.354, 1.392, 0.953, 0.921, 1.066, 1.504, 1.85, 2.16, 2.522, 3.814, 5.768, 8.211, 6.735)),
+                       data.frame(cov_D1103M02metaG_FD = c(18.947, 16.326, 13.845, 12.852, 12.122, 10.198, 8.557, 7.066, 6.057, 5.622, 5.055, 4.391, 3.937, 3.948, 4.076, 4.68, 5.177, 5.622, 6.577, 7.334, 8.266, 9.467, 11.252, 13.993, 15.399, 18.352, 21.756, 22.065, 20.566),
+                                  cov_D0817M02metaG_FD = c(1.479, 1.202, 0.937, 0.795, 0.681, 0.604, 0.517, 0.403, 0.351, 0.28, 0.259, 0.325, 0.474, 0.729, 0.986, 1.38, 1.803, 2.016, 2.123, 2.198, 2.773, 3.075, 3.295, 3.881, 4.855, 5.246, 4.731, 2.679, 1.727))
                    )
 
 

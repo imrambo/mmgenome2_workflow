@@ -3,7 +3,7 @@
 #Author: Ian Rambo
 #Thirteen... that's a mighty unlucky number... for somebody!
 
-#Script to clean 1.concoct.D0819M02metaG
+#Script to clean 327.concoct.D0819M02metaG
 
 library(mmgenome2)
 library(tidyverse)
@@ -44,7 +44,7 @@ clean_dir <- "/Users/ian/Documents/phd_research/MANERR_JGI/analysis/metaG/mmgeno
 dir.create(clean_dir)
 
 #Pre-clean name of genome file
-genome_pre_name <- "1.concoct.D0819M02metaG.fa"
+genome_pre_name <- "327.concoct.D0819M02metaG.fa"
 #-----------------------------------------------------------------------------
 #Path to genome
 genome_pre_path <- file.path(genome_dir, genome_pre_name)
