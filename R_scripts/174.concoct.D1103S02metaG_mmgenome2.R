@@ -3,33 +3,56 @@
 #Author: Ian Rambo
 #Thirteen... that's a mighty unlucky number... for somebody!
 
+#Script to clean 1.concoct.D0819M02metaG
+
 library(mmgenome2)
 library(tidyverse)
+library(shiny)
 
-#rm(list=ls())
-
+rm(list=ls())
+#=============================================================================
 cols_by_sample_name <- function(sample_name, df) {
   ### Return a list of column names for a set of sample_names
   sample_name_patt = paste(sample_name, collapse = "|")
   sample_name_vars = grep(sample_name_patt, colnames(df), value = TRUE)
   return(sample_name_vars)
 }
+
+write_genomes <- function(slist, extension, mmdf, gpn, outdir){
+  #Write output genome subsets from a list of shiny selection data frames
+  for(i in seq(1, length(slist))){
+    magid = paste("mag", as.character(i), sep = "-")
+    gpn_full = paste(gpn, paste(magid, extension, sep = "."), sep = "_")
+    mmsubset = mmextract(mmdf, selection = mag_selections[[i]])
+    outfile = file.path(outdir, gpn_full)
+    print(paste("exporting", outfile, sep = " "))
+    mmexport(mmsubset, assembly = assembly, file = outfile)
+  }
+  
+}
 #=============================================================================
-###---Directory containing depth files
+###---Input/Output
+#-----------------------------------------------------------------------------
+###---EDIT THESE PATHS
+
+#Directory containing depth files
 cov_dir <- "/Users/ian/Documents/phd_research/MANERR_JGI/analysis/metaG/mmgenome2/mmgenome2/cov_files"
 #Directory containing genome files
 genome_dir <- "/Users/ian/Documents/phd_research/MANERR_JGI/analysis/metaG/das_tool/DASTool_Run2_concoct-maxbin2-metabat2-vamb_diamond_DASTool_bins"
 #Create output directory for cleaned genomes
-clean_dir <- "/Users/ian/Documents/phd_research/MANERR_JGI/analysis/metaG/das_tool/DASTool_Run2_concoct-maxbin2-metabat2-vamb_diamond_DASTool_bins_cleaned"
+clean_dir <- "/Users/ian/Documents/phd_research/MANERR_JGI/analysis/metaG/mmgenome2/DASTool_Run2_bins_cleaned"
 dir.create(clean_dir)
 
 #Pre-clean name of genome file
 genome_pre_name <- "1.concoct.D0819M02metaG.fa"
-#Post-clean name of genome file
-genome_post_name <- "1.concoct.D0819M02metaG_cleaned"
+#-----------------------------------------------------------------------------
 #Path to genome
 genome_pre_path <- file.path(genome_dir, genome_pre_name)
 genome_basename <- gsub("\\.fa", "", basename(genome_pre_path))
+
+#Post-clean name of genome file
+genome_post_name <- paste(genome_basename, "cleaned", sep = "_")
+
 #Path to genome coverage file
 cov_file <- list.files(file.path(cov_dir, genome_basename),
                        pattern = ".*_cov", full.names = TRUE)
@@ -80,8 +103,6 @@ cov_boxplot <- cov_df_long %>% ggplot(aes(x = sample_name,
         strip.text.y = element_text(size = 11, colour = "black")) +
   ggtitle(genome_basename)
 
-cov_boxplot
-
 #Boxplot of log10 coverage values by sample
 cov_boxplot_log10 <- cov_df_long %>% ggplot(aes(x = sample_name,
                                                 y = log10(coverage))) +
@@ -94,10 +115,8 @@ cov_boxplot_log10 <- cov_df_long %>% ggplot(aes(x = sample_name,
         strip.text.y = element_text(size = 11, colour = "black")) +
   ggtitle(genome_basename)
 
-cov_boxplot_log10
-
 #=============================================================================
-###---Graphics 
+###---Coverage Graphics 
 
 mm <- mmgenome2::mmload(assembly = genome_pre_path,
                   coverage = cov_df,
@@ -105,6 +124,7 @@ mm <- mmgenome2::mmload(assembly = genome_pre_path,
                   kmer_pca = FALSE,
                   kmer_BH_tSNE = FALSE) 
 
+###---EDIT PAST THIS POINT---###
 #Regex of sample_names to target
 sreg <- "M[0-9]{2}"
 
@@ -121,7 +141,7 @@ pvars <- c(cov_pct_outlier_smp$sample_name[1:pr],
 svars <- cols_by_sample_name(sample_name = sreg, df = mm)
 
 #Plot multiple sample coverages 
-mmgenome2::mmplot_pairs(mm,
+mmpairs <- mmgenome2::mmplot_pairs(mm,
              variables = pvars,
              x_scale = "log10",
              y_scale = "log10",
@@ -130,14 +150,24 @@ mmgenome2::mmplot_pairs(mm,
              textsize = 3)
 
 ### Create a scatter plot with 2d density overlay
-ggplot(mm, aes(x = log10(cov_D1103M12metaG_FD),
-               y = log10(cov_D0819M20remetaG_FD))) +
+scatter_density2d_gg <- ggplot(mm, aes(x = log10(cov_D1103M12metaG_FD),
+               y = log10(cov_D0608M02metaG_FD))) +
   geom_point(aes(size = `length`), alpha = 0.6) +
   geom_density_2d()
 
 mmgenome2::mmplot(mm,
                   x = "cov_D1103M12metaG_FD",
-                  y = "cov_D0819M20remetaG_FD",
+                  y = "cov_D0608M02metaG_FD",
                   x_scale = "log10",
                   y_scale = "log10",
                   locator = TRUE)
+
+#List of shiny selection data frames
+mag_selections <- list(data.frame(cov_D1103M12metaG_FD = c(0.063, 0.063, 0.087, 0.318, 0.654, 1.094, 1.494, 1.249, 0.599),
+                              cov_D0608M02metaG_FD = c(1.359, 0.217, 0.112, 0.124, 0.331, 0.695, 1.558, 2.303, 2.803)),
+                   data.frame(cov_D1103M12metaG_FD = c(0.458, 0.458, 0.579, 0.876, 1.177, 1.845, 2.82, 3.584, 6.302, 5.977, 5.584, 3.226, 1.825, 1.033, 0.652, 0.414, 0.369),
+                              cov_D0608M02metaG_FD = c(0.204, 0.204, 0.27, 0.37, 0.499, 0.789, 1.044, 1.118, 0.482, 0.149, 0.045, 0.027, 0.021, 0.021, 0.018, 0.075, 0.155))
+                   )
+
+
+write_genomes(slist = mag_selections, extension = "fna", mmdf = mm, gpn = genome_post_name, outdir = clean_dir)
