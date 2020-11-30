@@ -126,7 +126,7 @@ mm <- mmgenome2::mmload(assembly = genome_pre_path,
 
 ###---EDIT PAST THIS POINT---###
 #Regex of sample_names to target
-sreg <- "M[0-9]{2}"
+sreg <- "U[0-9]{2}"
 
 cov_pct_outlier_smp <- cov_pct_outlier %>% filter(grepl(sreg, sample_name)) %>%
   mutate(sample_name = gsub("^", "cov_", sample_name))
@@ -150,24 +150,33 @@ mmpairs <- mmgenome2::mmplot_pairs(mm,
              textsize = 3)
 
 ### Create a scatter plot with 2d density overlay
-scatter_density2d_gg <- ggplot(mm, aes(x = log10(cov_D1103M12metaG_FD),
-               y = log10(cov_D0608M02metaG_FD))) +
+scatter_density2d_gg <- ggplot(mm, aes(x = log10(cov_D0817U20remetaG_FD),
+               y = log10(cov_D0819U20remetaG_FD))) +
   geom_point(aes(size = `length`), alpha = 0.6) +
   geom_density_2d()
 
 mmgenome2::mmplot(mm,
-                  x = "cov_D1103M12metaG_FD",
-                  y = "cov_D0608M02metaG_FD",
+                  x = "cov_D0817U20remetaG_FD",
+                  y = "cov_D0819U20remetaG_FD",
                   x_scale = "log10",
                   y_scale = "log10",
                   locator = TRUE)
 
 #List of shiny selection data frames
-mag_selections <- list(data.frame(cov_D1103M12metaG_FD = c(0.063, 0.063, 0.087, 0.318, 0.654, 1.094, 1.494, 1.249, 0.599),
-                              cov_D0608M02metaG_FD = c(1.359, 0.217, 0.112, 0.124, 0.331, 0.695, 1.558, 2.303, 2.803)),
-                   data.frame(cov_D1103M12metaG_FD = c(0.458, 0.458, 0.579, 0.876, 1.177, 1.845, 2.82, 3.584, 6.302, 5.977, 5.584, 3.226, 1.825, 1.033, 0.652, 0.414, 0.369),
-                              cov_D0608M02metaG_FD = c(0.204, 0.204, 0.27, 0.37, 0.499, 0.789, 1.044, 1.118, 0.482, 0.149, 0.045, 0.027, 0.021, 0.021, 0.018, 0.075, 0.155))
-                   )
+mag_selections <- list(data.frame(cov_D0817U20remetaG_FD = c(0.059, 0.059, 0.062, 0.066, 0.1, 0.145, 0.209, 0.262, 0.35, 0.443, 0.495, 0.497, 0.467, 0.42, 0.305, 0.138, 0.077),
+                                  cov_D0819U20remetaG_FD = c(0.307, 0.201, 0.126, 0.094, 0.097, 0.098, 0.102, 0.12, 0.157, 0.203, 0.276, 0.348, 0.48, 0.599, 0.693, 0.573, 0.502))
+                       )
 
 
-write_genomes(slist = mag_selections, extension = "fna", mmdf = mm, gpn = genome_post_name, outdir = clean_dir)
+write_genomes(slist = mag_selections, extension = "fna",
+              mmdf = mm, gpn = genome_post_name, outdir = clean_dir)
+#=============================================================================
+#Further refinement
+genome_clean_path <- "/Users/ian/Documents/phd_research/MANERR_JGI/analysis/metaG/mmgenome2/DASTool_Run2_bins_cleaned"
+
+
+mm_clean <- mmgenome2::mmload(assembly = genome_pre_path,
+                              coverage = cov_df,
+                              verbose = TRUE,
+                              kmer_pca = FALSE,
+                              kmer_BH_tSNE = FALSE) 

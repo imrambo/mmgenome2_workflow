@@ -68,5 +68,5 @@ head -n 1 $depth | cut -f1,${depth_colseq} -d $'\t' > $outdepth
 
 #Write the depthfile rows for the contigs
 grep -f <(grep '>' $fasta | sed -e "s/^>//g" | \
-awk '{gsub("$","[[:space:]]*",$0); print;}') $depth | \
-cut -f1,${depth_colseq} -d $'\t' >> $outdepth
+    awk '{gsub("$","[[:space:]]*",$0); print;}') $depth | \
+    cut -f1,${depth_colseq} -d $'\t' >> $outdepth

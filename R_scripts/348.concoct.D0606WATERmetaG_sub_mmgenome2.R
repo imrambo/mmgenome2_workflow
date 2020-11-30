@@ -126,7 +126,7 @@ mm <- mmgenome2::mmload(assembly = genome_pre_path,
 
 ###---EDIT PAST THIS POINT---###
 #Regex of sample_names to target
-sreg <- "M[0-9]{2}"
+sreg <- "WATER"
 
 cov_pct_outlier_smp <- cov_pct_outlier %>% filter(grepl(sreg, sample_name)) %>%
   mutate(sample_name = gsub("^", "cov_", sample_name))
@@ -156,18 +156,16 @@ scatter_density2d_gg <- ggplot(mm, aes(x = log10(cov_D1103M12metaG_FD),
   geom_density_2d()
 
 mmgenome2::mmplot(mm,
-                  x = "cov_D1103M12metaG_FD",
-                  y = "cov_D0608M02metaG_FD",
+                  x = svars[1],
+                  y = svars[2],
                   x_scale = "log10",
                   y_scale = "log10",
                   locator = TRUE)
 
 #List of shiny selection data frames
-mag_selections <- list(data.frame(cov_D1103M12metaG_FD = c(0.063, 0.063, 0.087, 0.318, 0.654, 1.094, 1.494, 1.249, 0.599),
-                              cov_D0608M02metaG_FD = c(1.359, 0.217, 0.112, 0.124, 0.331, 0.695, 1.558, 2.303, 2.803)),
-                   data.frame(cov_D1103M12metaG_FD = c(0.458, 0.458, 0.579, 0.876, 1.177, 1.845, 2.82, 3.584, 6.302, 5.977, 5.584, 3.226, 1.825, 1.033, 0.652, 0.414, 0.369),
-                              cov_D0608M02metaG_FD = c(0.204, 0.204, 0.27, 0.37, 0.499, 0.789, 1.044, 1.118, 0.482, 0.149, 0.045, 0.027, 0.021, 0.021, 0.018, 0.075, 0.155))
-                   )
+mag_selections <- list(data.frame(cov_D0606WATERmetaG_FD = c(36.443, 30.299, 23.918, 25.768, 29.812, 36.799, 47.686, 59.437, 70.57, 83.789, 93.848, 82.71, 57.542),
+                                  cov_D0608WATERmetaG_FD = c(37.249, 32.001, 21.394, 12.956, 9.528, 9.198, 10.706, 12.331, 17.126, 21.775, 28.48, 37.513, 44.917))
+                       )
 
 
 write_genomes(slist = mag_selections, extension = "fna", mmdf = mm, gpn = genome_post_name, outdir = clean_dir)

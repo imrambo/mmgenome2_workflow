@@ -3,7 +3,7 @@
 #Author: Ian Rambo
 #Thirteen... that's a mighty unlucky number... for somebody!
 
-#Script to clean 282.concoct.D1103M02metaG_sub
+#Script to REFINE 121.concoct.D1103M02metaG_sub_cleaned_mag-2
 
 library(mmgenome2)
 library(tidyverse)
@@ -36,26 +36,25 @@ write_genomes <- function(slist, extension, mmdf, gpn, outdir){
 ###---EDIT THESE PATHS
 
 #Directory containing depth files
-cov_dir <- "/Users/ian/Documents/phd_research/MANERR_JGI/analysis/metaG/mmgenome2/mmgenome2/cov_files"
+#cov_dir <- "/Users/ian/Documents/phd_research/MANERR_JGI/analysis/metaG/mmgenome2/mmgenome2/cov_files"
 #Directory containing genome files
-genome_dir <- "/Users/ian/Documents/phd_research/MANERR_JGI/analysis/metaG/das_tool/DASTool_Run2_concoct-maxbin2-metabat2-vamb_diamond_DASTool_bins"
+genome_dir <- "/Users/ian/Documents/phd_research/MANERR_JGI/analysis/metaG/mmgenome2/DASTool_Run2_bins_cleaned"
 #Create output directory for cleaned genomes
 clean_dir <- "/Users/ian/Documents/phd_research/MANERR_JGI/analysis/metaG/mmgenome2/DASTool_Run2_bins_cleaned"
 dir.create(clean_dir)
 
 #Pre-clean name of genome file
-genome_pre_name <- "282.concoct.D1103M02metaG_sub.fa"
+genome_pre_name <- "121.concoct.D1103M02metaG_sub_cleaned_mag-2.fna"
 #-----------------------------------------------------------------------------
 #Path to genome
 genome_pre_path <- file.path(genome_dir, genome_pre_name)
-genome_basename <- gsub("\\.fa", "", basename(genome_pre_path))
+genome_basename <- gsub("\\.fna", "", basename(genome_pre_path))
 
 #Post-clean name of genome file
-genome_post_name <- paste(genome_basename, "cleaned", sep = "_")
+genome_post_name <- paste(genome_basename, "refined", sep = "_")
 
 #Path to genome coverage file
-cov_file <- list.files(file.path(cov_dir, genome_basename),
-                       pattern = ".*_cov", full.names = TRUE)
+cov_file <- "/Users/ian/Documents/phd_research/MANERR_JGI/analysis/metaG/mmgenome2/mmgenome2/cov_files/121.concoct.D1103M02metaG_sub/121.concoct.D1103M02metaG_sub_cov"
 
 #Depth file data frame
 cov_df <- read.table(cov_file, header = TRUE, sep = "\t")
@@ -150,21 +149,22 @@ mmpairs <- mmgenome2::mmplot_pairs(mm,
              textsize = 3)
 
 ### Create a scatter plot with 2d density overlay
-scatter_density2d_gg <- ggplot(mm, aes(x = log10(cov_D0819M02metaG_FD),
-               y = log10(cov_D0606M02metaG_FD))) +
+scatter_density2d_gg <- ggplot(mm, aes(x = log10(cov_D0817M02metaG_FD),
+               y = log10(cov_D0819M02metaG_FD))) +
   geom_point(aes(size = `length`), alpha = 0.6) +
   geom_density_2d()
 
 mmgenome2::mmplot(mm,
-                  x = "cov_D0819M02metaG_FD",
-                  y = "cov_D0606M02metaG_FD",
+                  x = "cov_D0817M02metaG_FD",
+                  y = "cov_D0819M02metaG_FD",
                   x_scale = "log10",
                   y_scale = "log10",
                   locator = TRUE)
 
 #List of shiny selection data frames
-mag_selections <- list(data.frame(cov_D0819M02metaG_FD = c(1.274, 1.163, 0.965, 0.79, 0.681, 0.522, 0.321, 0.247, 0.196, 0.197, 0.335, 0.468, 1.498, 1.86, 1.974, 1.933),
-                                  cov_D0606M02metaG_FD = c(0.389, 0.299, 0.219, 0.164, 0.134, 0.095, 0.107, 0.138, 0.281, 0.384, 0.55, 0.771, 1.93, 1.624, 1.03, 0.64)))
+mag_selections <- list(data.frame(cov_D0817M02metaG_FD = c(2.585, 2.965, 3.288, 3.527, 3.515, 2.925, 2.559, 1.972, 1.239, 0.811, 0.688, 0.537, 0.438, 0.377, 0.277, 0.283, 0.374, 0.733, 1.048, 1.385),
+                                  cov_D0819M02metaG_FD = c(2.252, 1.982, 1.642, 1.289, 1.033, 0.603, 0.3, 0.139, 0.115, 0.089, 0.075, 0.075, 0.088, 0.103, 0.163, 0.255, 0.538, 1.173, 1.721, 2.252))
+                   )
 
 
 write_genomes(slist = mag_selections, extension = "fna", mmdf = mm, gpn = genome_post_name, outdir = clean_dir)

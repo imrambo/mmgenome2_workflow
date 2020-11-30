@@ -126,7 +126,7 @@ mm <- mmgenome2::mmload(assembly = genome_pre_path,
 
 ###---EDIT PAST THIS POINT---###
 #Regex of sample_names to target
-sreg <- "M[0-9]{2}"
+sreg <- "S[0-9]{2}"
 
 cov_pct_outlier_smp <- cov_pct_outlier %>% filter(grepl(sreg, sample_name)) %>%
   mutate(sample_name = gsub("^", "cov_", sample_name))
@@ -150,24 +150,24 @@ mmpairs <- mmgenome2::mmplot_pairs(mm,
              textsize = 3)
 
 ### Create a scatter plot with 2d density overlay
-scatter_density2d_gg <- ggplot(mm, aes(x = log10(cov_D1103M12metaG_FD),
-               y = log10(cov_D0608M02metaG_FD))) +
+scatter_density2d_gg <- ggplot(mm, aes(x = log10(cov_D0819S20remetaG_FD),
+               y = log10(cov_D0819S02metaG_FD))) +
   geom_point(aes(size = `length`), alpha = 0.6) +
   geom_density_2d()
 
 mmgenome2::mmplot(mm,
-                  x = "cov_D1103M12metaG_FD",
-                  y = "cov_D0608M02metaG_FD",
+                  x = "cov_D0819S20remetaG_FD",
+                  y = "cov_D0819S02metaG_FD",
                   x_scale = "log10",
                   y_scale = "log10",
                   locator = TRUE)
 
 #List of shiny selection data frames
-mag_selections <- list(data.frame(cov_D1103M12metaG_FD = c(0.063, 0.063, 0.087, 0.318, 0.654, 1.094, 1.494, 1.249, 0.599),
-                              cov_D0608M02metaG_FD = c(1.359, 0.217, 0.112, 0.124, 0.331, 0.695, 1.558, 2.303, 2.803)),
-                   data.frame(cov_D1103M12metaG_FD = c(0.458, 0.458, 0.579, 0.876, 1.177, 1.845, 2.82, 3.584, 6.302, 5.977, 5.584, 3.226, 1.825, 1.033, 0.652, 0.414, 0.369),
-                              cov_D0608M02metaG_FD = c(0.204, 0.204, 0.27, 0.37, 0.499, 0.789, 1.044, 1.118, 0.482, 0.149, 0.045, 0.027, 0.021, 0.021, 0.018, 0.075, 0.155))
-                   )
+mag_selections <- list(data.frame(cov_D0819S20remetaG_FD = c(1.044, 1.044, 1.062, 1.073, 1.091, 1.122, 1.153, 1.947, 2.895, 4.887, 6.298, 5.862, 5.64, 5.427, 4.524, 3.076, 1.734, 1.109),
+                                  cov_D0819S02metaG_FD = c(1.284, 0.729, 0.343, 0.177, 0.097, 0.05, 0.035, 0.029, 0.03, 0.034, 0.081, 0.197, 0.332, 0.801, 1.132, 1.502, 2.057, 1.932)),
+                       data.frame(cov_D0819S20remetaG_FD = c(1.005, 1.005, 1.01, 1.021, 1.021, 1.038, 1.05, 1.044, 0.866, 0.582, 0.372, 0.211, 0.165, 0.153, 0.128, 0.128, 0.144, 0.234, 0.391, 0.51),
+                                  cov_D0819S02metaG_FD = c(1.041, 0.67, 0.469, 0.293, 0.191, 0.115, 0.07, 0.056, 0.039, 0.036, 0.033, 0.033, 0.049, 0.096, 0.205, 0.389, 0.643, 0.818, 1.168, 1.27))
+                       )
 
 
 write_genomes(slist = mag_selections, extension = "fna", mmdf = mm, gpn = genome_post_name, outdir = clean_dir)

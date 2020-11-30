@@ -3,7 +3,7 @@
 #Author: Ian Rambo
 #Thirteen... that's a mighty unlucky number... for somebody!
 
-#Script to clean 282.concoct.D1103M02metaG_sub
+#Script to clean 303.concoct.D1103U20metaG_cleaned_mag-1
 
 library(mmgenome2)
 library(tidyverse)
@@ -38,24 +38,23 @@ write_genomes <- function(slist, extension, mmdf, gpn, outdir){
 #Directory containing depth files
 cov_dir <- "/Users/ian/Documents/phd_research/MANERR_JGI/analysis/metaG/mmgenome2/mmgenome2/cov_files"
 #Directory containing genome files
-genome_dir <- "/Users/ian/Documents/phd_research/MANERR_JGI/analysis/metaG/das_tool/DASTool_Run2_concoct-maxbin2-metabat2-vamb_diamond_DASTool_bins"
+genome_dir <-  "/Users/ian/Documents/phd_research/MANERR_JGI/analysis/metaG/mmgenome2/DASTool_Run2_bins_cleaned"
 #Create output directory for cleaned genomes
 clean_dir <- "/Users/ian/Documents/phd_research/MANERR_JGI/analysis/metaG/mmgenome2/DASTool_Run2_bins_cleaned"
 dir.create(clean_dir)
 
 #Pre-clean name of genome file
-genome_pre_name <- "282.concoct.D1103M02metaG_sub.fa"
+genome_pre_name <- "303.concoct.D1103U20metaG_cleaned_mag-1.fna"
 #-----------------------------------------------------------------------------
 #Path to genome
 genome_pre_path <- file.path(genome_dir, genome_pre_name)
-genome_basename <- gsub("\\.fa", "", basename(genome_pre_path))
+genome_basename <- gsub("\\.fna", "", basename(genome_pre_path))
 
 #Post-clean name of genome file
 genome_post_name <- paste(genome_basename, "cleaned", sep = "_")
 
 #Path to genome coverage file
-cov_file <- list.files(file.path(cov_dir, genome_basename),
-                       pattern = ".*_cov", full.names = TRUE)
+cov_file <- "/Users/ian/Documents/phd_research/MANERR_JGI/analysis/metaG/mmgenome2/mmgenome2/cov_files/303.concoct.D1103U20metaG/303.concoct.D1103U20metaG_cov"
 
 #Depth file data frame
 cov_df <- read.table(cov_file, header = TRUE, sep = "\t")
@@ -126,7 +125,7 @@ mm <- mmgenome2::mmload(assembly = genome_pre_path,
 
 ###---EDIT PAST THIS POINT---###
 #Regex of sample_names to target
-sreg <- "M[0-9]{2}"
+sreg <- "U[0-9]{2}"
 
 cov_pct_outlier_smp <- cov_pct_outlier %>% filter(grepl(sreg, sample_name)) %>%
   mutate(sample_name = gsub("^", "cov_", sample_name))
@@ -150,21 +149,33 @@ mmpairs <- mmgenome2::mmplot_pairs(mm,
              textsize = 3)
 
 ### Create a scatter plot with 2d density overlay
-scatter_density2d_gg <- ggplot(mm, aes(x = log10(cov_D0819M02metaG_FD),
-               y = log10(cov_D0606M02metaG_FD))) +
+scatter_density2d_gg <- ggplot(mm, aes(x = log10(cov_D0817U20remetaG_FD),
+               y = log10(cov_D0819U20remetaG_FD))) +
   geom_point(aes(size = `length`), alpha = 0.6) +
   geom_density_2d()
 
 mmgenome2::mmplot(mm,
-                  x = "cov_D0819M02metaG_FD",
-                  y = "cov_D0606M02metaG_FD",
+                  x = "cov_D0817U20remetaG_FD",
+                  y = "cov_D0819U20remetaG_FD",
                   x_scale = "log10",
                   y_scale = "log10",
                   locator = TRUE)
 
 #List of shiny selection data frames
-mag_selections <- list(data.frame(cov_D0819M02metaG_FD = c(1.274, 1.163, 0.965, 0.79, 0.681, 0.522, 0.321, 0.247, 0.196, 0.197, 0.335, 0.468, 1.498, 1.86, 1.974, 1.933),
-                                  cov_D0606M02metaG_FD = c(0.389, 0.299, 0.219, 0.164, 0.134, 0.095, 0.107, 0.138, 0.281, 0.384, 0.55, 0.771, 1.93, 1.624, 1.03, 0.64)))
+mag_selections <- list(data.frame(cov_D0817U20remetaG_FD = c(0.34, 0.332, 0.269, 0.22, 0.073, 0.08, 0.076, 0.078, 0.091, 0.105, 0.127, 0.178, 0.23, 0.31, 0.361, 0.435),
+                                  cov_D0819U20remetaG_FD = c(0.338, 0.379, 0.45, 0.526, 0.438, 0.314, 0.27, 0.222, 0.155, 0.148, 0.126, 0.129, 0.14, 0.172, 0.2, 0.264))
+                       )
 
 
-write_genomes(slist = mag_selections, extension = "fna", mmdf = mm, gpn = genome_post_name, outdir = clean_dir)
+write_genomes(slist = mag_selections, extension = "fna",
+              mmdf = mm, gpn = genome_post_name, outdir = clean_dir)
+#=============================================================================
+#Further refinement
+genome_clean_path <- "/Users/ian/Documents/phd_research/MANERR_JGI/analysis/metaG/mmgenome2/DASTool_Run2_bins_cleaned"
+
+
+mm_clean <- mmgenome2::mmload(assembly = genome_pre_path,
+                              coverage = cov_df,
+                              verbose = TRUE,
+                              kmer_pca = FALSE,
+                              kmer_BH_tSNE = FALSE) 

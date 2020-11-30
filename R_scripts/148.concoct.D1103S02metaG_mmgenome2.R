@@ -150,23 +150,26 @@ mmpairs <- mmgenome2::mmplot_pairs(mm,
              textsize = 3)
 
 ### Create a scatter plot with 2d density overlay
-scatter_density2d_gg <- ggplot(mm, aes(x = log10(cov_D1103M12metaG_FD),
-               y = log10(cov_D0608M02metaG_FD))) +
+scatter_density2d_gg <- ggplot(mm, aes(x = log10(cov_D0819S20remetaG_FD),
+               y = log10(cov_D0819S12metaG_FD))) +
+  geom_point(aes(size = `length`), alpha = 0.6) +
+  geom_density_2d()
+
+scatter_density2d_gg <- ggplot(mm, aes(x = log10(cov_D0606S02metaG_FD),
+                                       y = log10(cov_D0608S02metaG_FD))) +
   geom_point(aes(size = `length`), alpha = 0.6) +
   geom_density_2d()
 
 mmgenome2::mmplot(mm,
-                  x = "cov_D1103M12metaG_FD",
-                  y = "cov_D0608M02metaG_FD",
+                  x = "cov_D0606S02metaG_FD",
+                  y = "cov_D0608S02metaG_FD",
                   x_scale = "log10",
                   y_scale = "log10",
                   locator = TRUE)
 
 #List of shiny selection data frames
-mag_selections <- list(data.frame(cov_D1103M12metaG_FD = c(0.063, 0.063, 0.087, 0.318, 0.654, 1.094, 1.494, 1.249, 0.599),
-                              cov_D0608M02metaG_FD = c(1.359, 0.217, 0.112, 0.124, 0.331, 0.695, 1.558, 2.303, 2.803)),
-                   data.frame(cov_D1103M12metaG_FD = c(0.458, 0.458, 0.579, 0.876, 1.177, 1.845, 2.82, 3.584, 6.302, 5.977, 5.584, 3.226, 1.825, 1.033, 0.652, 0.414, 0.369),
-                              cov_D0608M02metaG_FD = c(0.204, 0.204, 0.27, 0.37, 0.499, 0.789, 1.044, 1.118, 0.482, 0.149, 0.045, 0.027, 0.021, 0.021, 0.018, 0.075, 0.155))
+mag_selections <- list(data.frame(cov_D0606S02metaG_FD = c(6.563, 7.045, 7.213, 7.069, 6.282, 5.434, 3.985, 3.158, 2.731, 2.519, 2.316, 2.172, 1.829, 1.582, 1.346, 1.129, 1.003, 0.919, 0.868, 0.871, 0.895, 0.922, 0.922, 1.137, 2.485, 2.922, 4.039, 4.622, 6.053),
+                                  cov_D0608S02metaG_FD = c(14.611, 12.342, 9.773, 7.008, 5.025, 4.141, 3.167, 2.662, 2.172, 1.947, 1.686, 1.604, 1.596, 1.424, 1.366, 1.57, 1.833, 2.254, 2.701, 3.17, 3.664, 4.278, 5.022, 5.833, 9.384, 12.728, 14.335, 16.566, 16.912))
                    )
 
 

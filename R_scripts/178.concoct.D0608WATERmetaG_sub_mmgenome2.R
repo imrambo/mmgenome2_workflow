@@ -126,7 +126,7 @@ mm <- mmgenome2::mmload(assembly = genome_pre_path,
 
 ###---EDIT PAST THIS POINT---###
 #Regex of sample_names to target
-sreg <- "M[0-9]{2}"
+sreg <- "WATER"
 
 cov_pct_outlier_smp <- cov_pct_outlier %>% filter(grepl(sreg, sample_name)) %>%
   mutate(sample_name = gsub("^", "cov_", sample_name))
@@ -142,7 +142,7 @@ svars <- cols_by_sample_name(sample_name = sreg, df = mm)
 
 #Plot multiple sample coverages 
 mmpairs <- mmgenome2::mmplot_pairs(mm,
-             variables = pvars,
+             variables = svars,
              x_scale = "log10",
              y_scale = "log10",
              alpha = 0.1,
@@ -150,24 +150,24 @@ mmpairs <- mmgenome2::mmplot_pairs(mm,
              textsize = 3)
 
 ### Create a scatter plot with 2d density overlay
-scatter_density2d_gg <- ggplot(mm, aes(x = log10(cov_D1103M12metaG_FD),
-               y = log10(cov_D0608M02metaG_FD))) +
+scatter_density2d_gg <- ggplot(mm, aes(x = log10(cov_D0608WATERmetaG_FD),
+               y = log10(cov_D0606WATERmetaG_FD))) +
   geom_point(aes(size = `length`), alpha = 0.6) +
   geom_density_2d()
 
 mmgenome2::mmplot(mm,
-                  x = "cov_D1103M12metaG_FD",
-                  y = "cov_D0608M02metaG_FD",
+                  x = "cov_D0608WATERmetaG_FD",
+                  y = "cov_D0606WATERmetaG_FD",
                   x_scale = "log10",
                   y_scale = "log10",
                   locator = TRUE)
 
 #List of shiny selection data frames
-mag_selections <- list(data.frame(cov_D1103M12metaG_FD = c(0.063, 0.063, 0.087, 0.318, 0.654, 1.094, 1.494, 1.249, 0.599),
-                              cov_D0608M02metaG_FD = c(1.359, 0.217, 0.112, 0.124, 0.331, 0.695, 1.558, 2.303, 2.803)),
-                   data.frame(cov_D1103M12metaG_FD = c(0.458, 0.458, 0.579, 0.876, 1.177, 1.845, 2.82, 3.584, 6.302, 5.977, 5.584, 3.226, 1.825, 1.033, 0.652, 0.414, 0.369),
-                              cov_D0608M02metaG_FD = c(0.204, 0.204, 0.27, 0.37, 0.499, 0.789, 1.044, 1.118, 0.482, 0.149, 0.045, 0.027, 0.021, 0.021, 0.018, 0.075, 0.155))
-                   )
+mag_selections <- list(data.frame(cov_D0608WATERmetaG_FD = c(456.259, 339.499, 240.854, 190.154, 126.805, 96.788, 67.137, 55.758, 48.441, 48.989, 65.643, 119.193, 209.244, 310.266, 489.441),
+                                  cov_D0606WATERmetaG_FD = c(417.228, 284.029, 191.456, 138.277, 87.854, 55.818, 47.204, 47.204, 69.34, 94.132, 139.648, 257.359, 413.135, 618.968, 643.001)),
+                       data.frame(cov_D0608WATERmetaG_FD = c(4.21, 3.479, 3.174, 2.942, 4.163, 5.901, 8.315, 11.717, 16.132, 22.21, 25.094, 30.401, 33.364, 37.478, 36.83, 30.401, 24.234, 15.579, 10.676, 5.192),
+                                  cov_D0606WATERmetaG_FD = c(2.135, 2.507, 3.872, 5.407, 6.962, 10.434, 16.118, 22.733, 29.871, 41.286, 51.056, 49.032, 41.706, 32.718, 25.152, 16.282, 10.225, 5.63, 3.571, 2.069))
+                       )
 
 
 write_genomes(slist = mag_selections, extension = "fna", mmdf = mm, gpn = genome_post_name, outdir = clean_dir)

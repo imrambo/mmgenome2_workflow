@@ -150,24 +150,22 @@ mmpairs <- mmgenome2::mmplot_pairs(mm,
              textsize = 3)
 
 ### Create a scatter plot with 2d density overlay
-scatter_density2d_gg <- ggplot(mm, aes(x = log10(cov_D1103M12metaG_FD),
+scatter_density2d_gg <- ggplot(mm, aes(x = log10(cov_D1105M02metaG_FD),
                y = log10(cov_D0608M02metaG_FD))) +
   geom_point(aes(size = `length`), alpha = 0.6) +
   geom_density_2d()
 
 mmgenome2::mmplot(mm,
-                  x = "cov_D1103M12metaG_FD",
+                  x = "cov_D1105M02metaG_FD",
                   y = "cov_D0608M02metaG_FD",
                   x_scale = "log10",
                   y_scale = "log10",
                   locator = TRUE)
 
 #List of shiny selection data frames
-mag_selections <- list(data.frame(cov_D1103M12metaG_FD = c(0.063, 0.063, 0.087, 0.318, 0.654, 1.094, 1.494, 1.249, 0.599),
-                              cov_D0608M02metaG_FD = c(1.359, 0.217, 0.112, 0.124, 0.331, 0.695, 1.558, 2.303, 2.803)),
-                   data.frame(cov_D1103M12metaG_FD = c(0.458, 0.458, 0.579, 0.876, 1.177, 1.845, 2.82, 3.584, 6.302, 5.977, 5.584, 3.226, 1.825, 1.033, 0.652, 0.414, 0.369),
-                              cov_D0608M02metaG_FD = c(0.204, 0.204, 0.27, 0.37, 0.499, 0.789, 1.044, 1.118, 0.482, 0.149, 0.045, 0.027, 0.021, 0.021, 0.018, 0.075, 0.155))
-                   )
+mag_selections <- list(data.frame(cov_D1105M02metaG_FD = c(2.445, 3.289, 5.581, 6.903, 6.527, 5.032, 4.103, 3.345, 2.476, 1.813, 1.128, 0.818, 0.65, 0.525, 0.522, 0.627, 0.684, 1.157),
+                                  cov_D0608M02metaG_FD = c(0.481, 0.473, 0.386, 0.31, 0.126, 0.066, 0.037, 0.025, 0.018, 0.016, 0.016, 0.025, 0.033, 0.048, 0.075, 0.142, 0.361, 0.497))
+                      )
 
 
 write_genomes(slist = mag_selections, extension = "fna", mmdf = mm, gpn = genome_post_name, outdir = clean_dir)
