@@ -72,5 +72,5 @@ tstamp=$(date +'%Y-%m-%d_%H-%M-%S')
 joblog=${joblog_dir}/$(basename "$0")_${tstamp}.joblog
 
 tail -n +4 $checkm_file  | \
-    awk -v comp_min="$comp_min" -v comp_max="$comp_max" -v cont_min="$cont_min" -v cont_max="$cont_max" -F '[[:space:]]+' '($14 >= comp_min) && ($14 <= comp_max) && ($15 >= cont_min) && ($15 <= cont_max) {print $2}' | \
+    awk -v comp_min="$comp_min" -v comp_max="$comp_max" -v cont_min="$cont_min" -v cont_max="$cont_max" -F '[[:space:]]+' '($14 >= comp_min) && ($14 <= comp_max) && ($15 >= cont_min) && ($15 <= cont_max) {print $1}' | \
     parallel --joblog $joblog --jobs $pjobs test -d ${outdir}/{} '||' mkdir -p ${outdir}/{}';' bash $(pwd)/extract_covfile.sh -f ${bindir}/{}.${ext} -d $depthfile -o ${outdir}/{}/{}_cov -v $novar 
